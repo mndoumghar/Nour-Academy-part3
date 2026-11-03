@@ -15,33 +15,12 @@ const search = document.getElementById("recherche");
 
 
 
-search.addEventListener("input", (event) => {
-    let input = event.target.value.trim();
-    let filter = eleves.filter((elemnt) => {
-        let matchNom  = elemnt.nom.toLocaleLowerCase().includes(input.toLowerCase()) || input === "";
-        let matchprenom  = elemnt.prenom.toLocaleLowerCase().includes(input.toLowerCase()) || input === "";
-        return matchNom || matchprenom;
-    });
-
-    render(filter);
-})
-
-
-
 groupes.forEach((group) => {
     const option = document.createElement("option");
     option.textContent = group.nom;
     option.value = group.id;
     select.append(option)
 })
-
-select.addEventListener("change", () => {
-    const filterDATA = eleves.filter((eleve) => (eleve.groupeId === Number(select.value) || select.value == ""));
-    render(filterDATA)
-
-
-})
-
 
 
 function render(filteredEleves = eleves) {
@@ -193,7 +172,28 @@ function getMeilleurMoyenne() {
     return bilan_meilleur.textContent = "mndoumghar";
 
 }
+function applyFilters() {
+    const query = search.value.trim().toLowerCase();
+    const selectedGroup = select.value;
 
+    const filteredEleves = eleves.filter((eleve) => {
+        const matchName =
+            eleve.prenom.toLowerCase().includes(query) ||
+            eleve.nom.toLowerCase().includes(query);
+
+        const matchGroup =
+            selectedGroup === "" ||
+            eleve.groupeId === Number(selectedGroup);
+
+        return matchName && matchGroup;
+    });
+
+    render(filteredEleves);
+}
+
+
+search.addEventListener("input", applyFilters);
+select.addEventListener("change", applyFilters);
 
 
 getAlertes()
