@@ -14,11 +14,18 @@ const select = document.getElementById("filtre-groupe");
 const search = document.getElementById("recherche");
 
 
+
 search.addEventListener("input", (event) => {
-    let input = event.target.value;
-    let filter = eleves.filter((elemnt) => (elemnt.nom.toLocaleLowerCase().includes(input.toLowerCase()) || input === ""));
+    let input = event.target.value.trim();
+    let filter = eleves.filter((elemnt) => {
+        let matchNom  = elemnt.nom.toLocaleLowerCase().includes(input.toLowerCase()) || input === "";
+        let matchprenom  = elemnt.prenom.toLocaleLowerCase().includes(input.toLowerCase()) || input === "";
+        return matchNom || matchprenom;
+    });
+
     render(filter);
 })
+
 
 
 groupes.forEach((group) => {
@@ -36,24 +43,27 @@ select.addEventListener("change", () => {
 })
 
 
-function render(eleves) {
-    cards.innerHTML = "";
 
-    eleves.forEach((eleve) => {
+function render(filteredEleves = eleves) {
+    cards.replaceChildren();
+    container.textContent = `${filteredEleves.length} élèves`;
+    const lignes = filteredEleves.map(creerLigne);
+    cards.append(...lignes);
+}
+
+
+function creerLigne(eleve) {
         const xx = eleve.notes;
         const li = document.createElement("li");
-
         li.classList.add("rounded-2xl", "border", "border-line", "bg-card", "p-3");
-
         if (eleve.absences >= 3) {
             li.classList.add("alerte");
         }
 
         li.dataset.id = eleve.id;
-
         const name = document.createElement("span");
         name.classList.add("block", "truncate", "font-medium");
-        name.textContent = eleve.nom;
+        name.textContent =`${eleve.prenom} ${eleve.nom}`;
 
         const absence = document.createElement("span");
         absence.classList.add("block", "text-sm", "text-muted");
@@ -66,6 +76,7 @@ function render(eleves) {
                 "rounded-full", "bg-alert", "px-2",
                 "py-0.5", "text-xs", "font-medium", "text-white"
             );
+
             spann.textContent = "Prévenir les parents";
             absence.append(spann);
         }
@@ -76,13 +87,14 @@ function render(eleves) {
             "rounded-full", "bg-brand-soft", "text-sm",
             "font-semibold", "text-brand"
         );
-        initials.textContent = eleve.initials;
 
+
+        initials.textContent = `${eleve.prenom[0]}${eleve.nom[0]}`.toUpperCase();
         const note = document.createElement("span");
 
         if (xx.length > 0) {
             note.classList.add("font-serif", "text-xl");
-            note.textContent = `${eleve.notes[0]} / 20`;
+            note.textContent = `${lanote(eleve.notes)}`;
         }
 
         const info = document.createElement("span");
@@ -131,7 +143,6 @@ function render(eleves) {
             "text-sm", "font-medium", "text-white", "hover:bg-brand"
         );
         noteBtn.textContent = "Ajouter la note";
-
         const actions = document.createElement("div");
         actions.classList.add("flex", "gap-2");
         actions.append(absentBtn, label, noteBtn);
@@ -142,19 +153,9 @@ function render(eleves) {
             "lg:flex-row", "lg:items-center"
         );
         container.append(fiche, actions);
+        li.append(container);
 
-        const p = document.createElement("p");
-        p.classList.add("message", "mt-2", "text-xs", "text-alert");
-        p.textContent = "La note doit être un nombre entre 0 et 20";
-
-        if (xx.length === 0) {
-            li.append(container, p);
-        } else {
-            li.append(container);
-        }
-
-        cards.append(li);
-    });
+        return li;
 }
 
 function getMoyenne() {
@@ -169,6 +170,13 @@ function getMoyenne() {
 }
 
 
+function lanote(arr) {
+    if (arr.length === 0) return "—";
+    const moyenne = arr.reduce((sum, note) => sum + note, 0) / arr.length;
+    return `${moyenne.toLocaleString("fr-FR", {
+        maximumFractionDigits: 1
+    })} / 20`;
+}
  
 function getAbsences() {
         const bilan_absences = document.getElementById("bilan-absences");

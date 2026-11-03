@@ -14,11 +14,6 @@ export const groupes = [
     id: 3,
     nom: "Collège - Selouane",
     cours: "Anglais"
-  },
-  {
-    id: 4,
-    nom: "mohmaed",
-    cours: "Anglais"
   }
 ];
 
@@ -36,16 +31,7 @@ export const eleves = [
     absences: 0,
     notes: [14, 16, 13]
   },
-     {
-    id: 5645,
-    prenom: "mohamed ndoumghar",
-    nom: "mohamed ndoumghar",
-    groupeId: 4,
-    telephoneParent: "0600000001",
-    absences: 6
-    ,
-    notes: [14, 16, 13]
-  },
+  
   {
     id: 2,
     prenom: "Sara",
@@ -83,7 +69,6 @@ export const eleves = [
     notes: [18, 16, 19]
   },
 
-  // Groupe 2 — 1ère Bac
   {
     id: 6,
     prenom: "Imane",
@@ -131,7 +116,6 @@ export const eleves = [
     notes: [9, 12, 14]
   },
 
-  // Groupe 3 — Collège
   {
     id: 11,
     prenom: "Nour",
