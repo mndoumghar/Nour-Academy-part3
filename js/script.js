@@ -53,7 +53,6 @@ function render(filteredEleves = eleves) {
 
 
 function creerLigne(eleve) {
-        const xx = eleve.notes;
         const li = document.createElement("li");
         li.classList.add("rounded-2xl", "border", "border-line", "bg-card", "p-3");
         if (eleve.absences >= 3) {
@@ -88,14 +87,11 @@ function creerLigne(eleve) {
             "font-semibold", "text-brand"
         );
 
-
         initials.textContent = `${eleve.prenom[0]}${eleve.nom[0]}`.toUpperCase();
         const note = document.createElement("span");
 
-        if (xx.length > 0) {
-            note.classList.add("font-serif", "text-xl");
-            note.textContent = `${lanote(eleve.notes)}`;
-        }
+        note.classList.add("font-serif", "text-xl");
+        note.textContent = lanote(eleve.notes);
 
         const info = document.createElement("span");
         info.classList.add("min-w-0", "flex-1");
