@@ -3,16 +3,12 @@
 import { eleves, groupes } from "./data.js"
 
 
-
 const container = document.getElementById("compteur");
 const cards = document.getElementById("liste-eleves");
 
 
-
-
 const select = document.getElementById("filtre-groupe");
 const search = document.getElementById("recherche");
-
 
 
 groupes.forEach((group) => {
@@ -133,6 +129,7 @@ function creerLigne(eleve) {
         return li;
 }
 
+
 function getMoyenne() {
     const bilan_moyenne = document.getElementById("bilan-moyenne");
     const moyenne = eleves.reduce((sum, ob) => {
@@ -144,7 +141,6 @@ function getMoyenne() {
     bilan_moyenne.textContent = `${averge}`;
 }
 
-
 function lanote(arr) {
     if (arr.length === 0) return "—";
     const moyenne = arr.reduce((sum, note) => sum + note, 0) / arr.length;
@@ -152,6 +148,7 @@ function lanote(arr) {
         maximumFractionDigits: 1
     })} / 20`;
 }
+
  
 function getAbsences() {
         const bilan_absences = document.getElementById("bilan-absences");
@@ -172,6 +169,7 @@ function getMeilleurMoyenne() {
     return bilan_meilleur.textContent = "mndoumghar";
 
 }
+
 function applyFilters() {
     const query = search.value.trim().toLowerCase();
     const selectedGroup = select.value;
@@ -192,9 +190,22 @@ function applyFilters() {
 }
 
 
+
+
 search.addEventListener("input", applyFilters);
 select.addEventListener("change", applyFilters);
 
+cards.addEventListener("click", (event) => {
+    const button = event.target.closest(".btn-absent");
+
+    if(!button) return
+
+    const li = event.target.closest("li");
+    const  ID = Number(li.dataset.id);
+    console.log(ID);
+    
+      
+})
 
 getAlertes()
 getAbsences()

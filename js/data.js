@@ -18,8 +18,6 @@ export const groupes = [
 ];
 
 
-
-
 export const eleves = [
 
     {
