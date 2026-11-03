@@ -11,12 +11,14 @@ const select = document.getElementById("filtre-groupe");
 const search = document.getElementById("recherche");
 
 
+
 groupes.forEach((group) => {
     const option = document.createElement("option");
     option.textContent = group.nom;
     option.value = group.id;
     select.append(option)
 })
+
 
 
 function render(filteredEleves = eleves) {
@@ -92,6 +94,7 @@ function creerLigne(eleve) {
 
         const input = document.createElement("input");
         input.type = "number";
+        input.id = "input";
         input.min = "0";
         input.max = "20";
         input.step = "0.5";
@@ -170,10 +173,11 @@ function getMeilleurMoyenne() {
 
 }
 
+
 function applyFilters() {
     const query = search.value.trim().toLowerCase();
     const selectedGroup = select.value;
-
+    const message = document.getElementById("message-items");
     const filteredEleves = eleves.filter((eleve) => {
         const matchName =
             eleve.prenom.toLowerCase().includes(query) ||
@@ -186,26 +190,92 @@ function applyFilters() {
         return matchName && matchGroup;
     });
 
+    if(filteredEleves.length==0) {
+        message.textContent = "aucun élève ne correspond ";
+    }
+
     render(filteredEleves);
 }
 
+function notificationAbsence() {
+    const lis_parents = document.getElementById("liste-parents");
+    lis_parents.replaceChildren();
+
+    const ul = document.createElement("ul");
+    ul.id = "liste-parents";
+    ul.classList.add("mt-3", "grid", "gap-2", "text-sm");
+
+    let  CallParent = eleves.filter(el => el.absences>=3);
+    CallParent.forEach((parent, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${parent.prenom} ${parent.nom} — ${parent.telephoneParent}`;
+        li.classList.add(
+            "rounded-xl",
+            "bg-card",
+            "px-3",
+            "py-2",
+            "ring-1",
+            "ring-line"
+        );
+
+        if (index === 0) {
+            li.classList.add("appeler-parent");
+        }
+
+        ul.appendChild(li);
+    });
+    lis_parents.append(ul);
+
+}
 
 
-
-search.addEventListener("input", applyFilters);
+search.addEventListener("input", Debounse(applyFilters));
 select.addEventListener("change", applyFilters);
 
 cards.addEventListener("click", (event) => {
     const button = event.target.closest(".btn-absent");
-
     if(!button) return
 
     const li = event.target.closest("li");
-    const  ID = Number(li.dataset.id);
-    console.log(ID);
+    const  ID = Number
+    (li.dataset.id);
     
-      
+    const objEleve = eleves.find((eleve) => eleve.id === ID);
+
+    if(!objEleve) return;  
+    objEleve.absences++;
+    render()
+    getAlertes();
+
+    if(objEleve.absences>=3) {
+        alert("Absence Est  3");
+        notificationAbsence();
+    }
 })
+
+
+cards.addEventListener("click", (event) => {
+
+    const button = event.target.closest(".btn-note");
+    if(!button) return
+    const li = event.target.closest("li");
+    const  ID = Number(li.dataset.id);
+    const objEleve = eleves.find((eleve) => eleve.id === ID);
+    const input = Number(li.querySelector("#input").value);
+
+    if(input>=0 && input<=20) {
+       objEleve.notes.append(input);
+    }
+
+    if(!objEleve) return;  
+    render()
+
+})
+
+
+
+
+
 
 getAlertes()
 getAbsences()
@@ -214,7 +284,18 @@ getMeilleurMoyenne();
 
 
 
+notificationAbsence()
 
+
+function Debounse(callback) {
+        let res = null;
+    return function() {
+        clearTimeout(res);
+       res = setTimeout(() => {
+            callback();
+        },1000);
+    }
+}
 
 
 render(eleves)
