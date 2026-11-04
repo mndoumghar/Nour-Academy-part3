@@ -45,11 +45,10 @@ Faire l'appel et saisir les notes
 - [X] Utiliser closest() et data-id.
 - [X] Retrouver l'élève avec find().
 - [X] Le bouton Absent incrémente absences.
-- [ ] Le bouton Ajouter la note ajoute une note.
-- [ ] Refuser toute note non numérique ou hors de [0, 20].
-- [ ] Afficher un message d'erreur si la note est invalide.
-- [ ] À partir de 3 absences, afficher la classe alerte et le badge.
-- [ ] Actualiser uniquement la ligne concernée.
-- [ ] Vérifier que la délégation fonctionne après filtrage.
-
+- [X] Le bouton Ajouter la note ajoute une note.
+- [X] Refuser toute note non numérique ou hors de [0, 20].
+- [X] Afficher un message d'erreur si la note est invalide.
+- [X] À partir de 3 absences, afficher la classe alerte et le badge.
+- [X] Actualiser uniquement la ligne concernée.
+- [X] Vérifier que la délégation fonctionne après filtrage.
 

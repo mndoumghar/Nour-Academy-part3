@@ -2,7 +2,6 @@
 
 import { eleves, groupes } from "./data.js"
 
-
 const container = document.getElementById("compteur");
 const cards = document.getElementById("liste-eleves");
 
@@ -29,11 +28,12 @@ function render(filteredEleves = eleves) {
 }
 
 
+
 function creerLigne(eleve) {
         const li = document.createElement("li");
         li.classList.add("rounded-2xl", "border", "border-line", "bg-card", "p-3");
         if (eleve.absences >= 3) {
-            li.classList.add("alerte");
+           li.classList.add("alerte");
         }
 
         li.dataset.id = eleve.id;
@@ -67,7 +67,8 @@ function creerLigne(eleve) {
         initials.textContent = `${eleve.prenom[0]}${eleve.nom[0]}`.toUpperCase();
         const note = document.createElement("span");
 
-        note.classList.add("font-serif", "text-xl");
+        note.classList.add("font-serif", "text-xl", "student-average");
+
         note.textContent = lanote(eleve.notes);
 
         const info = document.createElement("span");
@@ -94,16 +95,17 @@ function creerLigne(eleve) {
 
         const input = document.createElement("input");
         input.type = "number";
-        input.id = "input";
         input.min = "0";
         input.max = "20";
         input.step = "0.5";
         input.placeholder = "Note";
         input.classList.add(
+            "grade-input",
             "h-11", "w-full", "rounded-full",
             "border", "border-line", "bg-paper",
             "px-4", "text-sm", "lg:w-24"
         );
+
 
         const label = document.createElement("label");
         label.classList.add("flex-1");
@@ -126,7 +128,11 @@ function creerLigne(eleve) {
             "flex", "flex-col", "gap-3",
             "lg:flex-row", "lg:items-center"
         );
-        container.append(fiche, actions);
+         const span = document.createElement("span");
+        span.classList.add( "text-red-600");
+        span.classList.add("message")
+        container.append(fiche, actions, span);
+
         li.append(container);
 
         return li;
@@ -180,6 +186,7 @@ function applyFilters() {
     const message = document.getElementById("message-items");
 
     const filteredEleves = eleves.filter((eleve) => {
+
             return  (eleve.prenom.toLowerCase().includes(query) || eleve.nom.toLowerCase().includes(query) ) &&
                     ( selectedGroup === ""  || eleve.groupeId === Number(selectedGroup)); 
         });
@@ -200,8 +207,14 @@ function notificationAbsence() {
     ul.classList.add("mt-3", "grid", "gap-2", "text-sm");
 
     let  CallParent = eleves.filter(el => el.absences>=3);
+
+    CallParent = CallParent.sort((x,y) => y.absences- x.absences);
+
     CallParent.forEach((parent, index) => {
         const li = document.createElement("li");
+        const span =document.createElement("span");
+        span.textContent = parent.absences;
+        span.classList.add("w-full", "flex");
         li.textContent = `${parent.prenom} ${parent.nom} — ${parent.telephoneParent}`;
         li.classList.add(
             "rounded-xl",
@@ -211,10 +224,14 @@ function notificationAbsence() {
             "ring-1",
             "ring-line"
         );
+         
 
         if (index === 0) {
             li.classList.add("appeler-parent");
         }
+
+        li.append(span);
+    
 
         ul.appendChild(li);
     });
@@ -242,29 +259,60 @@ cards.addEventListener("click", (event) => {
     getAlertes();
 
     if(objEleve.absences>=3) {
-        alert("Absence Est  3");
+      //  alert("Absence Est  3");
         notificationAbsence();
     }
 })
 
 
+
+
 cards.addEventListener("click", (event) => {
-
     const button = event.target.closest(".btn-note");
-    if(!button) return
-    const li = event.target.closest("li");
-    const  ID = Number(li.dataset.id);
-    const objEleve = eleves.find((eleve) => eleve.id === ID);
-    const input = Number(li.querySelector("#input").value);
+    if (!button) return;
 
-    if(input>=0 && input<=20) {
-       objEleve.notes.append(input);
+    const li = button.closest("li[data-id]");
+
+    if (!li) return;
+
+    const ID = Number(li.dataset.id);
+
+    const objEleve = eleves.find(
+        (eleve) => eleve.id === ID
+    );
+
+    if (!objEleve) return;
+
+    const input = li.querySelector(".grade-input");
+    const message = li.querySelector(".message");
+
+    const value = input.value.trim();
+    const grade = Number(value);
+
+    if (
+        value === "" ||
+        !Number.isFinite(grade) ||
+        grade < 0 ||
+        grade > 20
+    ) {
+        message.textContent =
+            "La note doit être un nombre entre 0 et 20";
+        message.hidden = false;
+
+        input.focus();
+        return;
     }
 
-    if(!objEleve) return;  
-    render()
 
-})
+    objEleve.notes.push(grade);
+
+    li.querySelector(".student-average").textContent = lanote(objEleve.notes);
+
+    input.value = "";
+    message.hidden = true;
+
+});
+
 
 
 
@@ -291,4 +339,6 @@ function Debounse(callback) {
     }
 }
 
-    render(eleves)
+
+
+render(eleves)
