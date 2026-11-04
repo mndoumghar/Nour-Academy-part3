@@ -2,6 +2,7 @@
 
 import { eleves, groupes } from "./data.js"
 
+
 const container = document.getElementById("compteur");
 const cards = document.getElementById("liste-eleves");
 
@@ -18,15 +19,17 @@ groupes.forEach((group) => {
     select.append(option)
 })
 
-
-
 function render(filteredEleves = eleves) {
     cards.replaceChildren();
     container.textContent = `${filteredEleves.length} élèves`;
     const lignes = filteredEleves.map(creerLigne);
     cards.append(...lignes);
-}
 
+    getMeilleurMoyenne();
+    getAbsences();
+    getMoyenne();
+
+}
 
 
 function creerLigne(eleve) {
@@ -70,7 +73,7 @@ function creerLigne(eleve) {
         note.classList.add("font-serif", "text-xl", "student-average");
 
         note.textContent = lanote(eleve.notes);
-
+        
         const info = document.createElement("span");
         info.classList.add("min-w-0", "flex-1");
         info.append(name, absence);
@@ -175,9 +178,27 @@ function getAlertes() {
 function getMeilleurMoyenne() {
     const bilan_meilleur = document.getElementById("bilan-meilleur");
 
-    return bilan_meilleur.textContent = "mndoumghar";
+    const arr = eleves
+    
+        .filter((eleve) => eleve.notes.length > 0)
+        .map((eleve) => ({
+            id: eleve.id,
+            nom: `${eleve.prenom} ${eleve.nom}`,
+            moyenne: eleve.notes.reduce((sum, note) => sum + note, 0) / eleve.notes.length
+        }))
 
-}
+        
+    const meilleur = arr.reduce((sum, x) =>
+        x.moyenne > sum.moyenne ? x : sum
+    );
+    
+
+    bilan_meilleur.textContent =
+        `${meilleur.nom} — ${meilleur.moyenne.toLocaleString("fr-Ma", {
+            maximumFractionDigits: 2,
+        })} / 20`;
+
+    }
 
 
 function applyFilters() {
@@ -213,16 +234,36 @@ function notificationAbsence() {
     CallParent.forEach((parent, index) => {
         const li = document.createElement("li");
         const span =document.createElement("span");
-        span.textContent = parent.absences;
-        span.classList.add("w-full", "flex");
+        
+        /*
+        class="badge ml-1 whitespace-nowrap rounded-full bg-alert px-2 py-0.5 text-xs font-medium text-white"
+        
+        */
+       span.textContent = parent.absences;
+
+span.classList.add(
+    "ml-1",
+    "whitespace-nowrap",
+    "rounded-full",
+    "bg-alert",
+    "px-2",
+    "py-0.5",
+    "text-xs",
+    "font-medium",
+    "text-white"
+);
+
         li.textContent = `${parent.prenom} ${parent.nom} — ${parent.telephoneParent}`;
         li.classList.add(
+            "flex",
+            "w-full",
             "rounded-xl",
             "bg-card",
             "px-3",
             "py-2",
             "ring-1",
-            "ring-line"
+            "ring-line",
+            "justify-between"
         );
          
 
@@ -263,7 +304,6 @@ cards.addEventListener("click", (event) => {
         notificationAbsence();
     }
 })
-
 
 
 
@@ -310,6 +350,7 @@ cards.addEventListener("click", (event) => {
 
     input.value = "";
     message.hidden = true;
+    render();
 
 });
 
