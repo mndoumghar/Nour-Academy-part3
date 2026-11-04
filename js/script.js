@@ -178,18 +178,12 @@ function applyFilters() {
     const query = search.value.trim().toLowerCase();
     const selectedGroup = select.value;
     const message = document.getElementById("message-items");
+
     const filteredEleves = eleves.filter((eleve) => {
-        const matchName =
-            eleve.prenom.toLowerCase().includes(query) ||
-            eleve.nom.toLowerCase().includes(query);
-
-        const matchGroup =
-            selectedGroup === "" ||
-            eleve.groupeId === Number(selectedGroup);
-
-        return matchName && matchGroup;
-    });
-
+            return  (eleve.prenom.toLowerCase().includes(query) || eleve.nom.toLowerCase().includes(query) ) &&
+                    ( selectedGroup === ""  || eleve.groupeId === Number(selectedGroup)); 
+        });
+    
     if(filteredEleves.length==0) {
         message.textContent = "aucun élève ne correspond ";
     }
@@ -293,9 +287,8 @@ function Debounse(callback) {
         clearTimeout(res);
        res = setTimeout(() => {
             callback();
-        },1000);
+        },500);
     }
 }
 
-
-render(eleves)
+    render(eleves)
