@@ -1,7 +1,6 @@
 
-
 import { eleves, groupes } from "./data.js"
-
+import { initStudentForm } from "./features/student-form.js";
 
 const container = document.getElementById("compteur");
 const cards = document.getElementById("liste-eleves");
@@ -23,7 +22,7 @@ function render(filteredEleves = eleves) {
     cards.replaceChildren();
     container.textContent = `${filteredEleves.length} élèves`;
     const lignes = filteredEleves.map(creerLigne);
-    cards.append(...lignes);
+     cards.append(...lignes);
 
     getMeilleurMoyenne();
     getAbsences();
@@ -135,10 +134,9 @@ function creerLigne(eleve) {
         span.classList.add( "text-red-600");
         span.classList.add("message")
         container.append(fiche, actions, span);
-
         li.append(container);
-
         return li;
+
 }
 
 
@@ -219,6 +217,8 @@ function applyFilters() {
     render(filteredEleves);
 }
 
+
+
 function notificationAbsence() {
     const lis_parents = document.getElementById("liste-parents");
     lis_parents.replaceChildren();
@@ -283,6 +283,7 @@ span.classList.add(
 
 search.addEventListener("input", Debounse(applyFilters));
 select.addEventListener("change", applyFilters);
+
 
 cards.addEventListener("click", (event) => {
     const button = event.target.closest(".btn-absent");
@@ -379,6 +380,17 @@ function Debounse(callback) {
         },500);
     }
 }
+
+const form = document.getElementById("form-eleve");
+
+initStudentForm(
+    form,
+    eleves,
+    groupes,
+    applyFilters
+);
+
+
 
 
 
