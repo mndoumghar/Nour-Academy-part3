@@ -19,7 +19,6 @@ User Stories => 1:
 - [X] Afficher le compteur du nombre d'élèves
 
 
-
 User Stories => 2:
 
 ## Choisir un groupe et rechercher un élève
